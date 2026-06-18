@@ -1,0 +1,227 @@
+{
+  "app_name": "HENAKASHA TECH & WELFARE FOUNDATION",
+  "personality": "1 iOS-Native Clean",
+  "personality_one_liner": "A premium, modern, and trustworthy educational experience built on structure, clarity, and the brand's tri-color heritage.",
+  "color": {
+    "light": {
+      "surface": "#FFFFFF",
+      "onSurface": "#0A1128",
+      "surfaceSecondary": "#F2F4F8",
+      "onSurfaceSecondary": "#323B54",
+      "surfaceTertiary": "#E1E5EF",
+      "onSurfaceTertiary": "#1A2542",
+      "surfaceInverse": "#0A1128",
+      "onSurfaceInverse": "#FFFFFF",
+      "brand": "#1B2A6E",
+      "brandPrimary": "#1B2A6E",
+      "onBrandPrimary": "#FFFFFF",
+      "brandSecondary": "#FF8A1E",
+      "onBrandSecondary": "#FFFFFF",
+      "brandTertiary": "#E6EAFA",
+      "onBrandTertiary": "#1B2A6E",
+      "success": "#2EA84B",
+      "onSuccess": "#FFFFFF",
+      "warning": "#FFC107",
+      "onWarning": "#332701",
+      "error": "#DC3545",
+      "onError": "#FFFFFF",
+      "info": "#17A2B8",
+      "onInfo": "#FFFFFF",
+      "border": "#D1D8E8",
+      "borderStrong": "#9EACCF",
+      "divider": "#E1E5EF"
+    },
+    "dark": {
+      "surface": "#0A1128",
+      "onSurface": "#F2F4F8",
+      "surfaceSecondary": "#151E39",
+      "onSurfaceSecondary": "#C1CADC",
+      "surfaceTertiary": "#1E2A4C",
+      "onSurfaceTertiary": "#FFFFFF",
+      "surfaceInverse": "#FFFFFF",
+      "onSurfaceInverse": "#0A1128",
+      "brand": "#2940A3",
+      "brandPrimary": "#2940A3",
+      "onBrandPrimary": "#FFFFFF",
+      "brandSecondary": "#FF9A40",
+      "onBrandSecondary": "#1A0D00",
+      "brandTertiary": "#1D2D60",
+      "onBrandTertiary": "#A3B6F5",
+      "success": "#34C759",
+      "onSuccess": "#0A3311",
+      "warning": "#FFD60A",
+      "onWarning": "#332A02",
+      "error": "#FF453A",
+      "onError": "#4D0F0A",
+      "info": "#64D2FF",
+      "onInfo": "#00314A",
+      "border": "#2A385E",
+      "borderStrong": "#43588C",
+      "divider": "#1E2A4C"
+    }
+  },
+  "typography": {
+    "displayFontFamily": "Plus Jakarta Sans",
+    "textFontFamily": "DM Sans",
+    "scale": {
+      "sm": 12,
+      "base": 14,
+      "lg": 16,
+      "xl": 20,
+      "2xl": 24
+    }
+  },
+  "spacing": {
+    "rule": "Generous vertical breathing room for content digestion. Generous safe-area margins. Use 'md' or 'lg' gaps for grids, no tight spacing.",
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24,
+    "2xl": 32,
+    "3xl": 48
+  },
+  "radius_tokens": {
+    "sm": 6,
+    "md": 12,
+    "lg": 20,
+    "pill": 999
+  },
+  "shadow_tier": 1,
+  "navigation": "bottom_tabs",
+  "icon_set": "Ionicons",
+  "glassmorphism": {
+    "enabled": true,
+    "do's": [
+      "Use blur on bottom tab bar when content scrolls behind it",
+      "Use frosted glass on the floating action button or primary sticky CTA container",
+      "Apply glass effects on bottom sheet headers and modal scrims"
+    ],
+    "dont's": [
+      "Do not use glassmorphism on regular list items or course cards",
+      "Do not use blur on input fields or static text backgrounds"
+    ]
+  },
+  "platform_libraries": {
+    "glass": {
+      "ios": "expo-glass-effect",
+      "android": "expo-blur",
+      "low_end_android_fallback": "solid surfaceSecondary"
+    },
+    "image": "expo-image",
+    "blur": "expo-blur",
+    "bottom_sheet": "@gorhom/bottom-sheet",
+    "animation": "react-native-reanimated",
+    "gesture": "react-native-gesture-handler"
+  },
+  "screens": [
+    {
+      "name": "Auth (Login / Register)",
+      "purpose": "A premium entry point allowing multi-role access.",
+      "states": {
+        "loading": "Full screen spinner with 'brandPrimary' tint.",
+        "empty": "N/A",
+        "error": "Toast or inline text above the submit button with 'error' color."
+      },
+      "layout": "Top-aligned logo (large). Generous '2xl' spacing. Input fields with labels above (no floating labels). A prominent sticky 'brandPrimary' CTA button. Secondary actions (Forgot password) in 'brandSecondary' text."
+    },
+    {
+      "name": "Home",
+      "purpose": "Discover courses, view upcoming live classes, and understand the platform's value.",
+      "states": {
+        "loading": "Skeleton UI for course cards and banners.",
+        "empty": "Illustration with 'No courses available right now'.",
+        "error": "Readable message with a 'Retry' button in the center."
+      },
+      "layout": "AppHeader with Logo. HeroBanner using full-width card with image overlay (gradient scrim + text). Horizontal sticky CategoryChip row. Horizontal scrolling Featured Courses (Cards width 80% to peek the next). Vertical list for Popular courses."
+    },
+    {
+      "name": "Courses (Catalog)",
+      "purpose": "Browse, search, and filter the complete course library.",
+      "states": {
+        "loading": "Skeleton grids.",
+        "empty": "Illustration showing 'No courses found' with clear search term.",
+        "error": "Error loading catalog, 'Retry' CTA."
+      },
+      "layout": "Sticky search bar at the top (with glassmorphism). Filter pills below it. 2-column grid for courses. CourseCard: Thumbnail (with gradient scrim if text overlays), Title, Instructor, Rating, Price."
+    },
+    {
+      "name": "Course Detail & Enrollment",
+      "purpose": "Persuade the student to enroll and clearly lay out syllabus.",
+      "states": {
+        "loading": "Skeleton header and list items.",
+        "empty": "N/A",
+        "error": "Error fetching course details, 'Retry' CTA."
+      },
+      "layout": "Hero image at top, title/rating below. Segmented control for (About, Syllabus, Reviews). Sticky primary CTA at the bottom ('Enroll Now' / 'Pay') over a glass container."
+    },
+    {
+      "name": "Payment (Razorpay + Manual UPI)",
+      "purpose": "Frictionless checkout with clear manual upload flow.",
+      "states": {
+        "loading": "Spinner during payment verification.",
+        "empty": "N/A",
+        "error": "Red error toast or card indicating 'Payment Failed' / 'Upload Error'."
+      },
+      "layout": "Order summary card at the top. Radio select for (Razorpay, UPI Manual). If UPI Manual: Show PhonePe QR prominently. Below QR, show UTR input field and a large dashed tap-to-upload area for receipt. Submit button sticky at bottom."
+    },
+    {
+      "name": "My Study Dashboard",
+      "purpose": "Central hub for the student's active learning journey.",
+      "states": {
+        "loading": "Skeleton for tab content.",
+        "empty": "Friendly 'You haven't started any courses yet' illustration with a CTA to browse.",
+        "error": "Failed to load dashboard, 'Retry' CTA."
+      },
+      "layout": "Top scrolling tab bar (Courses, Live, Recordings, Notes, Tests, Exams, Certificates). Content renders as stacked vertical cards depending on the tab. Live Class tab features a card with a distinct 'Join on MS Teams' CTA (brandPrimary or success color)."
+    },
+    {
+      "name": "Teacher / Admin Panels",
+      "purpose": "Manage users, courses, payments, and content uploads.",
+      "states": {
+        "loading": "Skeleton table/list rows.",
+        "empty": "No pending tasks or users found.",
+        "error": "Failed to load admin data."
+      },
+      "layout": "Drawer or Stack navigation (different from Student bottom tabs). Dense list rows with clear actions (Approve, Reject, Upload). Statistics/Analytics rendered as summary cards at the top."
+    },
+    {
+      "name": "Exam / Test Player",
+      "purpose": "Focus-oriented environment for taking timed assessments.",
+      "states": {
+        "loading": "Spinner before test start.",
+        "empty": "N/A",
+        "error": "Connection error warning."
+      },
+      "layout": "Header with sticky countdown timer. Large typography for questions. Distinct radio buttons/checkboxes. For subjective: large text area and 'Upload File' button. Sticky 'Next' / 'Submit' button at bottom."
+    }
+  ],
+  "images": {
+    "logo": {
+      "url": "https://customer-assets.emergentagent.com/job_learning-hena/artifacts/si1cgnjv_ChatGPT%20Image%20Jun%2018%2C%202026%2C%2001_51_17%20PM.png",
+      "alt": "HENAKASHA TECH & WELFARE FOUNDATION Logo"
+    },
+    "upi_qr": {
+      "url": "https://customer-assets.emergentagent.com/job_learning-hena/artifacts/pi1g6kyh_WhatsApp%20Image%202026-06-18%20at%202.26.26%20PM.jpeg",
+      "alt": "PhonePe UPI QR Code"
+    },
+    "hero_banner_student": {
+      "url": "https://images.unsplash.com/photo-1637589308599-3478cc55510d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHwyfHxpbmRpYW4lMjBzdHVkZW50JTIwbGFwdG9wJTIwZWR1Y2F0aW9ufGVufDB8fHx8MTc4MTc3MzY5OHww&ixlib=rb-4.1.0&q=85",
+      "alt": "Indian student using laptop for online education"
+    },
+    "live_class_empty": {
+      "url": "https://images.pexels.com/photos/5905961/pexels-photo-5905961.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "alt": "Student attending an online class on a laptop"
+    }
+  },
+  "instructions_to_main_agent": [
+    "Use the exact logo colors mapped into the UI tokens: Saffron as `brandSecondary` (#FF8A1E) for badges/accents, Deep Blue as `brandPrimary` (#1B2A6E) for primary buttons/headers, and Green as `success` (#2EA84B).",
+    "Font requirement: `Plus Jakarta Sans` for Display/Headings and `DM Sans` for body/text. Load via expo-font with Google Fonts CSS CDN or @react-native-fonts. Do not use Inter or Roboto.",
+    "Implement the layout as 1 iOS-Native Clean: generous padding, pill or rounded rectangle shapes, clear hierarchy, and elevated cards with shadow_tier 1.",
+    "For the Manual UPI Upload flow, clearly present the uploaded 'upi_qr' image, followed by a 'UTR' input field, and a tap-to-upload dashed container for the receipt.",
+    "The Student role uses Bottom Tabs (Home, Browse, My Study, Profile). All administrative roles (Teacher, Admin, Super Admin) must use Stacked navigation with a Drawer layout.",
+    "Always apply a dark-to-transparent vertical gradient scrim over the 'hero_banner_student' or course thumbnails if text is overlaid, ensuring WCAG AA readability.",
+    "Include the Microsoft Teams join link prominently in the Live Classes card UI, styled as a high-contrast button.",
+    "Ensure all interactive CTAs use a sticky container at the bottom over scrolling content, applying a glassmorphism blur effect where applicable (refer to glassmorphism rules)."
+  ]
+}
