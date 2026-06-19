@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Button, Input } from '@/src/components/ui';
+import DateTimePicker from '@/src/components/DateTimePicker';
 import { api } from '@/src/lib/api';
 import { theme, spacing } from '@/src/lib/theme';
 
@@ -132,11 +133,12 @@ const Modal = ({ title, onClose, children }: any) => (
 );
 
 const LiveForm = ({ courseId, onClose }: any) => {
-  const [f, setF] = useState({ title: '', description: '', teams_link: '', scheduled_at: '', duration_min: '90' });
+  const [f, setF] = useState({ title: '', description: '', teams_link: '', duration_min: '90' });
+  const [when, setWhen] = useState<Date | null>(null);
   const save = async () => {
-    if (!f.title || !f.teams_link || !f.scheduled_at) { alert('Title, link & schedule required'); return; }
+    if (!f.title || !f.teams_link || !when) { alert('Title, link & schedule required'); return; }
     try {
-      await api.post('/live-classes', { course_id: courseId, title: f.title, description: f.description, teams_link: f.teams_link, scheduled_at: new Date(f.scheduled_at).toISOString(), duration_min: parseInt(f.duration_min) || 90 });
+      await api.post('/live-classes', { course_id: courseId, title: f.title, description: f.description, teams_link: f.teams_link, scheduled_at: when.toISOString(), duration_min: parseInt(f.duration_min) || 90 });
       onClose();
     } catch (e: any) { alert(e?.response?.data?.detail || 'Failed'); }
   };
@@ -144,7 +146,7 @@ const LiveForm = ({ courseId, onClose }: any) => {
     <Input testID="lc-title" label="Title *" value={f.title} onChangeText={(v: string) => setF({ ...f, title: v })} />
     <Input testID="lc-desc" label="Description" value={f.description} onChangeText={(v: string) => setF({ ...f, description: v })} multiline />
     <Input testID="lc-link" label="MS Teams Link *" value={f.teams_link} onChangeText={(v: string) => setF({ ...f, teams_link: v })} placeholder="https://teams.microsoft.com/l/meetup-join/..." />
-    <Input testID="lc-when" label="Schedule (YYYY-MM-DD HH:MM) *" value={f.scheduled_at} onChangeText={(v: string) => setF({ ...f, scheduled_at: v })} placeholder="2026-07-15 19:00" />
+    <DateTimePicker testID="lc-when" label="Schedule (date & time) *" value={when} onChange={setWhen} minDate={new Date()} />
     <Input testID="lc-dur" label="Duration (minutes)" value={f.duration_min} onChangeText={(v: string) => setF({ ...f, duration_min: v })} keyboardType="numeric" />
     <Text style={{ fontSize: 11, color: theme.textMuted, marginBottom: 10 }}>Students will see the "Go Live (Join MS Teams)" button enabled from start time to start+duration.</Text>
     <Button title="Schedule" testID="lc-save" onPress={save} full />
