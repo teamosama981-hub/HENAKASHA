@@ -815,6 +815,7 @@ async def submit_quiz(p: QuizSubmissionIn, u=Depends(current_user)):
         course = await db.courses.find_one({"id": q["course_id"]}, {"_id": 0})
         has_cert = bool(course.get("has_certificate", True)) if course else True
         if has_cert and not await db.certificates.find_one({"user_id": u["id"], "course_id": q["course_id"]}):
+            cert_id = f"HENA-{uuid.uuid4().hex[:10].upper()}"
             await db.certificates.insert_one({
                 "id": cert_id, "user_id": u["id"], "user_name": u.get("full_name"),
                 "user_email": u.get("email"), "user_phone": u.get("phone"),
