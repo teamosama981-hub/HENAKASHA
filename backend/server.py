@@ -83,6 +83,25 @@ async def insert_auto(collection_name, document):
     collection = getattr(active_db, collection_name)
     return await collection.insert_one(document)
 
+async def update_auto(collection_name, query, update_data):
+    databases = [db1]
+
+    if db2 is not None:
+        databases.append(db2)
+
+    if db3 is not None:
+        databases.append(db3)
+
+    for database in databases:
+        result = await getattr(database, collection_name).update_one(
+            query,
+            update_data
+        )
+
+        if result.modified_count > 0:
+            return result
+
+    return None
 
 async def find_one_all(collection_name, query):
     databases = [db1]
@@ -100,6 +119,79 @@ async def find_one_all(collection_name, query):
             return result
 
     return None
+
+async def delete_auto(collection_name, query):
+    databases = [db1]
+
+    if db2 is not None:
+        databases.append(db2)
+
+    if db3 is not None:
+        databases.append(db3)
+
+    deleted_count = 0
+
+    for database in databases:
+        result = await getattr(database, collection_name).delete_many(query)
+        deleted_count += result.deleted_count
+
+    return deleted_count
+
+async def find_all_auto(
+    collection_name,
+    query=None,
+    sort_field="created_at",
+    sort_order=-1
+):
+    if query is None:
+        query = {}
+
+    databases = [db1]
+
+    if db2 is not None:
+        databases.append(db2)
+
+    if db3 is not None:
+        databases.append(db3)
+
+    results = []
+
+    for database in databases:
+        docs = await getattr(
+            database,
+            collection_name
+        ).find(query).to_list(None)
+
+        results.extend(docs)
+
+    results.sort(
+        key=lambda x: x.get(sort_field, ""),
+        reverse=(sort_order == -1)
+    )
+
+    return results
+
+async def count_all_auto(collection_name, query=None):
+    if query is None:
+        query = {}
+
+    total = 0
+
+    databases = [db1]
+
+    if db2 is not None:
+        databases.append(db2)
+
+    if db3 is not None:
+        databases.append(db3)
+
+    for database in databases:
+        total += await getattr(
+            database,
+            collection_name
+        ).count_documents(query)
+
+    return total
 
 app = FastAPI(title="HENAKASHA EdTech API")
 api = APIRouter(prefix="/api")
@@ -545,12 +637,15 @@ async def list_courses(q: Optional[str] = None, category: Optional[str] = None,
             {"description": {"$regex": q, "$options": "i"}},
             {"instructor_name": {"$regex": q, "$options": "i"}},
         ]
-    return await db.courses.find(filt, {"_id": 0}).sort("created_at", -1).to_list(500)
+    return await find_all_auto("courses", filt)
 
 
 @api.get("/courses/{cid}")
 async def get_course(cid: str):
-    c = await db.courses.find_one({"id": cid}, {"_id": 0})
+    c = await find_one_all(
+    "courses",
+    {"id": cid}
+)
     if not c: raise HTTPException(404, "Course not found")
     return c
 
@@ -558,19 +653,29 @@ async def get_course(cid: str):
 @api.post("/courses")
 async def create_course(p: CourseIn, u=Depends(require_roles("admin", "super_admin"))):
     doc = p.dict(); doc.update({"id": str(uuid.uuid4()), "created_at": now_utc().isoformat()})
-    await db.courses.insert_one(doc)
+    await insert_auto(
+    "courses",
+    doc
+)
     return {k: v for k, v in doc.items() if k != "_id"}
 
 
 @api.put("/courses/{cid}")
 async def update_course(cid: str, p: CourseIn, u=Depends(require_roles("admin", "super_admin"))):
-    await db.courses.update_one({"id": cid}, {"$set": p.dict()})
+    await update_auto(
+    "courses",
+    {"id": cid},
+    {"$set": p.dict()}
+)
     return await db.courses.find_one({"id": cid}, {"_id": 0})
 
 
 @api.delete("/courses/{cid}")
 async def delete_course(cid: str, u=Depends(require_roles("admin", "super_admin"))):
-    await db.courses.delete_one({"id": cid}); return {"ok": True}
+    await delete_auto(
+    "courses",
+    {"id": cid}
+)
 
 
 # ----------------------------- settings -----------------------------------
@@ -644,18 +749,25 @@ async def verify_rzp(course_id: str, razorpay_payment_id: str, u=Depends(current
 
 @api.get("/payments/pending")
 async def pending_payments(u=Depends(require_roles("admin", "super_admin"))):
-    return await db.payments.find({"status": "pending"}, {"_id": 0}).sort("created_at", -1).to_list(500)
-
+    \return await find_all_auto(
+    "payments",
+    {"status":"pending"}
+)
 
 @api.get("/payments/all")
 async def all_payments(u=Depends(require_roles("admin", "super_admin"))):
-    return await db.payments.find({}, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    return await find_all_auto(
+    "payments",
+    {}
+)
 
 
 @api.get("/payments/mine")
 async def my_payments(u=Depends(current_user)):
-    return await db.payments.find({"user_id": u["id"]}, {"_id": 0}).sort("created_at", -1).to_list(200)
-
+    return await find_all_auto(
+    "payments",
+    {"user_id":u["id"]}
+)
 
 @api.post("/payments/verify")
 async def verify_manual_payment(p: PaymentApprovalIn, u=Depends(require_roles("admin", "super_admin"))):
@@ -703,7 +815,11 @@ async def create_live_class(p: LiveClassIn, u=Depends(require_roles("teacher", "
 @api.get("/live-classes")
 async def list_live_classes(course_id: Optional[str] = None):
     f = {"course_id": course_id} if course_id else {}
-    items = await db.live_classes.find(f, {"_id": 0}).sort("scheduled_at", -1).to_list(500)
+    items = await find_all_auto(
+    "live_classes",
+    f,
+    "scheduled_at"
+)
     return [annotate_live(i) for i in items]
 
 
@@ -731,7 +847,10 @@ async def add_recording(p: RecordingIn, u=Depends(require_roles("teacher", "admi
 
 @api.get("/recordings")
 async def list_recordings(course_id: str):
-    return await db.recordings.find({"course_id": course_id}, {"_id": 0}).sort("created_at", -1).to_list(500)
+    return await find_all_auto(
+    "recordings",
+    {"course_id":course_id}
+)
 
 
 @api.get("/recordings/{rid}")
@@ -759,7 +878,15 @@ async def upload_note(p: NoteIn, u=Depends(require_roles("teacher", "admin", "su
 
 @api.get("/notes")
 async def list_notes(course_id: str):
-    return await db.notes.find({"course_id": course_id}, {"_id": 0, "file_base64": 0}).sort("created_at", -1).to_list(500)
+    notes = await find_all_auto(
+    "notes",
+    {"course_id":course_id}
+)
+
+for n in notes:
+    n.pop("file_base64", None)
+
+return notes
 
 
 @api.get("/notes/{nid}")
@@ -818,7 +945,7 @@ def _grade(quiz: Dict[str, Any], answers: Dict[str, Any]) -> Dict[str, Any]:
 @api.post("/quizzes")
 async def create_quiz(p: QuizIn, u=Depends(require_roles("teacher", "admin", "super_admin"))):
     doc = p.dict(); doc.update({"id": str(uuid.uuid4()), "created_by": u["id"], "created_at": now_utc().isoformat()})
-    await db.quizzes.insert_one(doc)
+    await insert_auto("quizzes", doc)
     return {k: v for k, v in doc.items() if k != "_id"}
 
 
@@ -837,7 +964,10 @@ async def delete_quiz(qid: str, u=Depends(require_roles("teacher", "admin", "sup
 async def list_quizzes(course_id: str, kind: Optional[str] = None):
     f: Dict[str, Any] = {"course_id": course_id}
     if kind: f["kind"] = kind
-    return await db.quizzes.find(f, {"_id": 0}).sort("created_at", -1).to_list(500)
+    return await find_all_auto(
+    "quizzes",
+    f
+)
 
 
 @api.get("/quizzes/{qid}")
@@ -1025,7 +1155,10 @@ async def create_announcement(p: AnnouncementIn, u=Depends(require_roles("teache
 async def list_announcements(course_id: Optional[str] = None):
     f: Dict[str, Any] = {}
     if course_id: f["$or"] = [{"course_id": course_id}, {"course_id": None}]
-    return await db.announcements.find(f, {"_id": 0}).sort("created_at", -1).to_list(500)
+    return await find_all_auto(
+    "announcements",
+    f
+)
 
 
 @api.delete("/announcements/{aid}")
@@ -1077,11 +1210,29 @@ async def mark_all_read(u=Depends(current_user)):
 # ----------------------------- analytics ----------------------------------
 @api.get("/analytics/overview")
 async def analytics(u=Depends(require_roles("admin", "super_admin"))):
-    total_students = await db.users.count_documents({"role": "student"})
-    total_teachers = await db.users.count_documents({"role": "teacher"})
-    total_courses = await db.courses.count_documents({"status": "published"})
-    pending = await db.payments.count_documents({"status": "pending"})
-    total_certs = await db.certificates.count_documents({"valid": True})
+    total_students = await count_all_auto(
+    "users",
+    {"role":"student"}
+)
+
+total_teachers = await count_all_auto(
+    "users",
+    {"role":"teacher"}
+)
+
+total_courses = await count_all_auto(
+    "courses"
+)
+
+pending = await count_all_auto(
+    "payments",
+    {"status":"pending"}
+)
+
+total_certs = await count_all_auto(
+    "certificates",
+    {"valid":True}
+)
     revenue = 0.0; month_revenue = 0.0
     now = now_utc()
     async for p in db.payments.find({"status": "approved"}, {"_id": 0, "amount": 1, "created_at": 1}):
