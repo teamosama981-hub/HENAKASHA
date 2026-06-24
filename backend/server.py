@@ -42,8 +42,45 @@ UPI_QR_URL = os.environ.get("UPI_QR_URL", "")
 APP_PUBLIC_URL = os.environ.get("APP_PUBLIC_URL", "")
 PASS_MARK_PCT = 60.0  # student must score >=60% to earn certificate
 
-client = AsyncIOMotorClient(MONGO_URL)
-db = client[DB_NAME]
+MONGO_URL_2 = os.environ.get("MONGO_URL_2")
+MONGO_URL_3 = os.environ.get("MONGO_URL_3")
+
+client1 = AsyncIOMotorClient(MONGO_URL)
+db1 = client1[DB_NAME]
+
+client2 = AsyncIOMotorClient(MONGO_URL_2) if MONGO_URL_2 else None
+db2 = client2[DB_NAME] if client2 else None
+
+client3 = AsyncIOMotorClient(MONGO_URL_3) if MONGO_URL_3 else None
+db3 = client3[DB_NAME] if client3 else None
+
+db = db1
+
+async def get_active_db():
+    try:
+        stats1 = await db1.command("dbStats")
+        size1 = stats1.get("dataSize", 0)
+
+        if size1 < 450 * 1024 * 1024:
+            return db1
+
+        if db2:
+            stats2 = await db2.command("dbStats")
+            size2 = stats2.get("dataSize", 0)
+
+            if size2 < 450 * 1024 * 1024:
+                return db2
+
+        if db3:
+            return db3
+
+        return db1
+
+    except Exception as e:
+        log.error(f"DB switch error: {e}")
+        return db1
+
+
 app = FastAPI(title="HENAKASHA EdTech API")
 api = APIRouter(prefix="/api")
 security = HTTPBearer(auto_error=False)
@@ -347,9 +384,9 @@ async def seed():
             "razorpay_key_secret": "",
             "razorpay_enabled": False,
             "teams_default_link": "",
-            "contact_email": "support@henakasha.org",
-            "contact_phone": "+91 00000 00000",
-            "whatsapp_number": "+919000000000",
+            "contact_email": "henakashatechwelfarefoundation@gmail.com",
+            "contact_phone": "+91 90064 48298",
+            "whatsapp_number": "+919006448298",
             "updated_at": now_utc().isoformat(),
         })
 
