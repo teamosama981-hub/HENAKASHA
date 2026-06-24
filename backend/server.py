@@ -88,10 +88,10 @@ async def find_one_all(collection_name, query):
     databases = [db1]
 
     if db2 is not None:
-    databases.append(db2)
+        databases.append(db2)
 
-if db3 is not None:
-    databases.append(db3)
+    if db3 is not None:
+        databases.append(db3)
 
     for database in databases:
         result = await getattr(database, collection_name).find_one(query)
