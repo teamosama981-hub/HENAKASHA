@@ -812,29 +812,38 @@ async def submit_manual_payment(p: PaymentManualIn, u=Depends(current_user)):
 async def create_rzp_order(course_id: str, u=Depends(current_user)):
     settings = await find_one_all("settings", {"id": "global"})
     if not settings or not settings.get("razorpay_enabled"):
-        raise HTTPException(400, "Razorpay not configured. Use manual UPI payment.")
+        raise HTTPException(
+            400,
+            "Razorpay not configured. Use manual UPI payment."
+        )
+
     course = await find_one_all("courses", {"id": course_id})
     if not course:
         raise HTTPException(404, "Course not found")
-   amount = int((course.get("discount_price") or course.get("price") or 0) * 100)
 
-if not razorpay_client:
-    raise HTTPException(500, "Razorpay client not configured")
+    amount = int(
+        (course.get("discount_price") or course.get("price") or 0) * 100
+    )
 
-order = razorpay_client.order.create({
-    "amount": amount,
-    "currency": "INR",
-    "payment_capture": 1
-})
+    if not razorpay_client:
+        raise HTTPException(
+            500,
+            "Razorpay client not configured"
+        )
 
-return {
-    "key_id": RAZORPAY_KEY_ID,
-    "amount": amount,
-    "currency": "INR",
-    "order_id": order["id"],
-    "course_id": course_id
-}
+    order = razorpay_client.order.create({
+        "amount": amount,
+        "currency": "INR",
+        "payment_capture": 1
+    })
 
+    return {
+        "key_id": RAZORPAY_KEY_ID,
+        "amount": amount,
+        "currency": "INR",
+        "order_id": order["id"],
+        "course_id": course_id
+    }
 
 class RazorpayVerifyIn(BaseModel):
     course_id: str
