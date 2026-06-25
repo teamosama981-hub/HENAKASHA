@@ -22,6 +22,7 @@ from fastapi import FastAPI, APIRouter, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from motor.motor_asyncio import AsyncIOMotorClient
+from bson import ObjectId
 from pydantic import BaseModel, Field
 from starlette.middleware.cors import CORSMiddleware
 
@@ -164,12 +165,18 @@ async def find_all_auto(
     results = []
 
     for database in databases:
+
         docs = await getattr(
             database,
             collection_name
         ).find(query).to_list(None)
 
-        results.extend(docs)
+        for doc in docs:
+
+            if "_id" in doc and isinstance(doc["_id"], ObjectId):
+                doc["_id"] = str(doc["_id"])
+
+            results.append(doc)
 
     results.sort(
         key=lambda x: x.get(sort_field, ""),
