@@ -7,6 +7,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { api } from '@/src/lib/api';
 import { theme, spacing, QR_URL } from '@/src/lib/theme';
 import { Button } from '@/src/components/ui';
+import { Platform } from "react-native";
+import RazorpayCheckout from "react-native-razorpay";
 
 export default function Payment() {
   const { course } = useLocalSearchParams<{ course: string }>();
