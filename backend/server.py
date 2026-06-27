@@ -1006,6 +1006,12 @@ async def my_enrollments(u=Depends(current_user)):
     for database in databases:
         batch = await database.enrollments.aggregate(pipeline).to_list(500)
         rows.extend(batch)
+    # Convert Google Drive sharing URLs inside the embedded course object
+    for row in rows:
+        c = row.get("course")
+        if c:
+            c["thumbnail"] = convert_drive_image(c.get("thumbnail", ""))
+            c["banner"] = convert_drive_image(c.get("banner", ""))
     return [r for r in rows if r.get("course")]
 
 
