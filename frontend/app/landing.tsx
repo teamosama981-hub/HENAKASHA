@@ -30,7 +30,7 @@ export default function Landing() {
         <View style={styles.headerInner}>
           <Image source={{ uri: LOGO_URL }} style={{ width: 44, height: 44 }} contentFit="contain" />
           <View style={{ flex: 1, marginLeft: 10 }}>
-            <Text style={styles.brandName}>HENAKASHA</Text>
+            <Text style={styles.brandName}>M SQURE</Text>
             <Text style={styles.brandSub}>Tech & Welfare Foundation</Text>
           </View>
           <Pressable testID="header-login" onPress={() => router.push('/(auth)/login' as any)} style={styles.signinBtn}>
@@ -96,7 +96,7 @@ export default function Landing() {
         {/* ABOUT */}
         <View style={styles.aboutCard}>
           <Text style={styles.aboutH}>About the Foundation</Text>
-          <Text style={styles.aboutP}>HENAKASHA TECH & WELFARE FOUNDATION is committed to making quality education accessible to every learner. Our mission is to Educate, Empower and Elevate through technology-led learning.</Text>
+          <Text style={styles.aboutP}>M SQURE TECH & WELFARE FOUNDATION is committed to making quality education accessible to every learner. Our mission is to Educate, Empower and Elevate through technology-led learning.</Text>
           <View style={{ flexDirection: 'row', gap: 12, marginTop: 14, flexWrap: 'wrap' }}>
             <Stat n="10K+" l="Students" />
             <Stat n="50+" l="Live Courses" />
