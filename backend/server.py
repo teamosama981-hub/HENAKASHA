@@ -1238,7 +1238,7 @@ async def submit_quiz(p: QuizSubmissionIn, u=Depends(current_user)):
         has_cert = bool(course.get("has_certificate", True)) if course else True
         existing_cert = await find_one_all("certificates", {"user_id": u["id"], "course_id": q["course_id"]})
         if has_cert and not existing_cert:
-            cert_id = f"HENA-{uuid.uuid4().hex[:10].upper()}"
+            cert_id = f"MSQURE-{uuid.uuid4().hex[:10].upper()}"
             # BUG FIX 1 (applied here): APP_PUBLIC_URL is now stripped of trailing
             # slash at module load time, so this f-string always produces a valid
             # absolute URL like https://host.com/verify/HENA-xxx
