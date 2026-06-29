@@ -40,7 +40,7 @@ export default function Register() {
           <View style={styles.logoBox}>
             <Image source={{ uri: LOGO_URL }} style={{ width: 84, height: 84 }} contentFit="contain" />
             <Text style={styles.title}>Create your account</Text>
-            <Text style={styles.sub}>Start learning with HENAKASHA today</Text>
+            <Text style={styles.sub}>Start learning with M SQURE TECH today</Text>
           </View>
           <View style={{ marginTop: 18 }}>
             <Input testID="reg-name" label="Full Name" value={full_name} onChangeText={setName} placeholder="Your full name" />
