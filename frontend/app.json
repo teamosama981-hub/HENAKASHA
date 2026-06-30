@@ -8,6 +8,7 @@
     "scheme": "frontend",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.msqure.msquretechwelfarefoundation",
@@ -15,19 +16,22 @@
         "ITSAppUsesNonExemptEncryption": false
       }
     },
+
     "android": {
+      "package": "com.msqure.msquretechwelfarefoundation",
+      "edgeToEdgeEnabled": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#000000"
-      },
-      "edgeToEdgeEnabled": true,
-      "package": "com.msqure.msquretechwelfarefoundation"
+      }
     },
+
     "web": {
       "bundler": "metro",
       "output": "single",
       "favicon": "./assets/images/favicon.png"
     },
+
     "plugins": [
       "expo-router",
       [
@@ -42,12 +46,15 @@
       "expo-font",
       "@react-native-community/datetimepicker"
     ],
+
     "experiments": {
       "typedRoutes": true
     },
+
     "extra": {
       "router": {},
-      
+      "eas": {
+        "projectId": "9473b09d-7098-420e-ae9f-1bbf894d13d1"
       }
     }
   }
